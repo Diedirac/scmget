@@ -125,7 +125,7 @@ void startAIAdversarialChess(int level, FILE* fp, unsigned long long* nodeCount)
 	board.print();
 }
 
-void gmInput(ChessBoard* board, HumanPlayer * p, char * input, , Move & move) {
+void gmInput(ChessBoard* board, HumanPlayer * p, char * input, Move & move) {
 	if(!p->processInput(input, move)) {
 		printf("Error while parsing input.\n");
 		continue;
