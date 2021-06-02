@@ -6,6 +6,8 @@
 #include "aiplayer.h"
 #include "CycleTimer.h"
 #include <omp.h>
+#include <cstring>
+#include <string>
 
 using namespace std;
 
@@ -125,49 +127,50 @@ void startAIAdversarialChess(int level, FILE* fp, unsigned long long* nodeCount)
 	board.print();
 }
 
-void gmInput(ChessBoard* board, HumanPlayer * p, char * input, Move & move) {
-	if(!p->processInput(input, move)) {
+void gmInput(ChessBoard* board, HumanPlayer * p, char* input, Move * move, int turn) {
+	list<Move> regulars, nulls;
+
+	if(!p->processInput(input, *move)) {
 		printf("Error while parsing input.\n");
-		continue;
+		return;
 	}
 
-	if(!board.isValidMove(p->color, move)) {
+	if(!board->isValidMove(turn, *move)) {
 		printf("Invalid move.\n");
-		continue;
+		return;
 	}
 
 	printf("\n");
 
-	board.getMoves(turn, regulars, regulars, nulls);
+	board->getMoves(turn, regulars, regulars, nulls);
 
 	// execute maintenance moves
 	for(list<Move>::iterator it = nulls.begin(); it != nulls.end(); ++it)
-		board.move(*it);
+		board->move(*it);
 
 	// execute move
-	board.move(move);
+	board->move(*move);
 }
 
 int main() {
 	ChessBoard board;
-	list<Move> regulars, nulls;
 	int turn = WHITE;
 	Move move;
-	bool found;
-	
 	double start, decisionTime;
+	char* pos = (char *) malloc(5 * sizeof(char));
 
 	// Initialize players
-	HumanPlayer black(BLACK);
-	HumanPlayer white(WHITE);
+	HumanPlayer p1(WHITE);
+	HumanPlayer p2(BLACK);
 
 	// setup board
 	board.initDefaultSetup();
+	strcpy(pos, "b2b4");
 
-	gmInput(&board, white, "b2b4", move);
-
+	gmInput(&board, &p1, pos, &move, turn);
 	board.print();
 
+	free(pos);
 	
 	/*for(;;) {
 		// show board
@@ -232,7 +235,5 @@ int main() {
 		turn = TOGGLE_COLOR(turn);
 	}*/
 	
-	if(!system("PAUSE"))
-		return -1;
 	return 0;
 }
