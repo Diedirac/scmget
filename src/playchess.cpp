@@ -38,24 +38,12 @@ void startAutoChess() {
 	for(int i = 0; i < 67; ++i) {
 		// query player's choice
 		if(turn)
-		{
-			if(!p2->processInput(input, move)) {
-				printf("Error while parsing input.\n");
-				return;
-			}
-		}
+			found = p2.getMove(board, move, buffer);
 		else
-		{
-			if(!p1->processInput(input, move)) {
-				printf("Error while parsing input.\n");
-				return;
-			}
-		}
-		
-		if(!board->isValidMove(turn, move)) {
-			printf("Invalid move.\n");
-			return;
-		}
+			found = p1.getMove(board, move, buffer);
+
+		if(!found)
+			break;
 
 		// if player has a move get all moves
 		regulars.clear();

@@ -20,6 +20,11 @@ class HumanPlayer: public ChessPlayer {
 		bool getMove(ChessBoard & board, Move & move) const;
 		
 		/*
+		* Ask player what to do
+		*/
+		bool getMove(ChessBoard & board, Move & move, char* str) const;
+		
+		/*
 		* Read input from stdin
 		*/
 		char * readInput(void) const;

@@ -45,6 +45,21 @@ bool HumanPlayer::getMove(ChessBoard & board, Move & move) const
 	return true;
 }
 
+bool HumanPlayer::getMove(ChessBoard & board, Move & move, char* str) const
+{
+	if(!processInput(str, move)) {
+		printf("Error while parsing input.\n");
+		return false;
+	}
+
+	if(!board.isValidMove(color, move)) {
+		printf("Invalid move.\n");
+		return false;
+	}
+
+	return true;
+}
+
 char * HumanPlayer::readInput(void) const
 {
 	int buffsize = 8, c, i;
