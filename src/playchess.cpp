@@ -11,31 +11,7 @@
 
 using namespace std;
 
-void gmInput(ChessBoard* board, HumanPlayer * p, char* str, Move * move, int turn) {
-	char input[5];
-	char temp[5];
-	const char *del = " ";
-	char *s = strtok(str, del);
-	int i = 0;
-
-	while(s != NULL) {
-		if(i == 3)
-		{
-			memcpy(input, s, 2);
-			input[2] = '\0';
-		}
-		else if(i == 5)
-		{
-			memcpy(temp, s, 2);
-			temp[2] = '\0';
-		}
-
-		s = strtok(NULL, del);
-		++i;
-	}
-
-	strcat(input, temp);
-	
+void gmInput(ChessBoard* board, HumanPlayer * p, char* input, Move * move, int turn) {
 	list<Move> regulars, nulls;
 
 	if(!p->processInput(input, *move)) {
@@ -66,7 +42,8 @@ int main() {
 	Move move;
 	double start, decisionTime;
 	FILE *fp;
-	char *buffer = (char *) malloc(100 * sizeof(char));
+	int buffersize = 10;
+	char *buffer = (char *) malloc(buffersize * sizeof(char));
 
 	// Initialize players
 	HumanPlayer p1(WHITE);
@@ -75,17 +52,17 @@ int main() {
 	// setup board
 	board.initDefaultSetup();
 	board.print();
-	
-	if(!(fp = fopen("Game4_LV3_Record.csv", "r")))
+
+	if(!(fp = fopen("Game4_LV3_RecordPosition.csv", "r")))
 	{
 		printf("File open failed!\n");
 		return -1;
 	}
 
-	fgets(buffer, 100, fp);
+	for(int i = 0; i < 10; ++i) {
+		fgets(buffer, buffersize, fp);
 
-	for(int i = 0; i < 5; ++i) {
-		fgets(buffer, 100, fp);
+		printf("%s", buffer);
 
 		// query player's choice
 		if(turn) {
