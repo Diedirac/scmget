@@ -36,16 +36,44 @@ void gmInput(ChessBoard* board, HumanPlayer * p, char* input, Move * move, int t
 	board->move(*move);
 }
 
+void splitPos(char *str, char *pos) {
+	char tempA[5];
+	char tempB[5];
+	const char *del = " ";
+	char *s = strtok(str, del);
+	int i = 0;
+
+	while(s != NULL) {
+		printf("%d: %s %llu\n", i, s, strlen(s));
+
+		if(i == 3)
+		{
+			memcpy(tempA, s, 2);
+			tempA[2] = '\0';
+		}
+		else if(i == 5)
+		{
+			memcpy(tempB, s, 2);
+			tempB[2] = '\0';
+		}
+
+		s = strtok(NULL, del);
+		++i;
+	}
+
+	strcat(tempA, tempB);
+	printf("%s %llu\n", tempA, strlen(tempA));
+	strcpy(pos, tempA);
+}
+
 int main() {
 	ChessBoard board;
 	int turn = WHITE;
 	Move move;
 	double start, decisionTime;
 	FILE *fp;
-	char buffer[100];
-
-
-	char* pos = (char *) malloc(5 * sizeof(char));
+	char *buffer = (char *) malloc(100 * sizeof(char));
+	char *pos = (char *) malloc(5 * sizeof(char));
 
 	// Initialize players
 	HumanPlayer p1(WHITE);
@@ -53,7 +81,6 @@ int main() {
 
 	// setup board
 	board.initDefaultSetup();
-	fscanf(fp, "%s\n", buffer);
 	board.print();
 	
 	if(!(fp = fopen("Game4_LV3_Record.csv", "r")))
@@ -62,23 +89,31 @@ int main() {
 		return -1;
 	}
 
-	for(int i = 0; i < 1; ++i) {
-		// show board
-		fscanf(fp, "%s,%s,\n", NULL, buffer);
-		
+	fgets(buffer, 100, fp);
+
+	for(int i = 0; i < 5; ++i) {
+		fgets(buffer, 100, fp);
+		printf("before split%d\n", i);
+		splitPos(buffer, pos);
+		printf(pos);
 
 		// query player's choice
 		if(turn) {
-			gmInput(&board, &p2, pos, &move, turn)
+			gmInput(&board, &p2, pos, &move, turn);
 		}
 		else {
-			gmInput(&board, &p1, pos, &move, turn)
+			gmInput(&board, &p1, pos, &move, turn);
 		}
 	
 		// opponents turn
 		turn = TOGGLE_COLOR(turn);
+
+		// show board
 		board.print();
 	}
-	
+
+	fclose(fp);
+	free(buffer);
+	free(pos);
 	return 0;
 }
