@@ -16,6 +16,7 @@ void startAutoChess() {
 	list<Move> regulars, nulls;
 	int turn = WHITE;
 	Move move;
+	bool found;
 
 	// Initialize players
 	HumanPlayer p1(WHITE);
@@ -36,6 +37,11 @@ void startAutoChess() {
 	board.print();
 	
 	for(int i = 0; i < 67; ++i) {
+		if(fgets(buffer, buffersize, fp) != NULL)
+			buffer[4] = '\0';
+		else
+			break;
+
 		// query player's choice
 		if(turn)
 			found = p2.getMove(board, move, buffer);
