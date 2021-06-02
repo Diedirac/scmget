@@ -28,7 +28,7 @@ void startAutoChess() {
 	if(!(fp = fopen("Game4_LV3_RecordPosition.csv", "r")))
 	{
 		printf("File open failed!\n");
-		return -1;
+		return;
 	}
 	
 	// setup board
@@ -37,12 +37,22 @@ void startAutoChess() {
 	
 	for(int i = 0; i < 67; ++i) {
 		// query player's choice
-		if(!p->processInput(input, *move)) {
-			printf("Error while parsing input.\n");
-			return;
+		if(turn)
+		{
+			if(!p2->processInput(input, move)) {
+				printf("Error while parsing input.\n");
+				return;
+			}
 		}
-
-		if(!board->isValidMove(turn, *move)) {
+		else
+		{
+			if(!p1->processInput(input, move)) {
+				printf("Error while parsing input.\n");
+				return;
+			}
+		}
+		
+		if(!board->isValidMove(turn, move)) {
 			printf("Invalid move.\n");
 			return;
 		}
