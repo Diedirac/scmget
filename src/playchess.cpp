@@ -11,7 +11,31 @@
 
 using namespace std;
 
-void gmInput(ChessBoard* board, HumanPlayer * p, char* input, Move * move, int turn) {
+void gmInput(ChessBoard* board, HumanPlayer * p, char* str, Move * move, int turn) {
+	char input[5];
+	char temp[5];
+	const char *del = " ";
+	char *s = strtok(str, del);
+	int i = 0;
+
+	while(s != NULL) {
+		if(i == 3)
+		{
+			memcpy(input, s, 2);
+			input[2] = '\0';
+		}
+		else if(i == 5)
+		{
+			memcpy(temp, s, 2);
+			temp[2] = '\0';
+		}
+
+		s = strtok(NULL, del);
+		++i;
+	}
+
+	strcat(input, temp);
+	
 	list<Move> regulars, nulls;
 
 	if(!p->processInput(input, *move)) {
@@ -36,36 +60,6 @@ void gmInput(ChessBoard* board, HumanPlayer * p, char* input, Move * move, int t
 	board->move(*move);
 }
 
-void splitPos(char *str, char *pos) {
-	char tempA[5];
-	char tempB[5];
-	const char *del = " ";
-	char *s = strtok(str, del);
-	int i = 0;
-
-	while(s != NULL) {
-		printf("%d: %s %llu\n", i, s, strlen(s));
-
-		if(i == 3)
-		{
-			memcpy(tempA, s, 2);
-			tempA[2] = '\0';
-		}
-		else if(i == 5)
-		{
-			memcpy(tempB, s, 2);
-			tempB[2] = '\0';
-		}
-
-		s = strtok(NULL, del);
-		++i;
-	}
-
-	strcat(tempA, tempB);
-	printf("%s %llu\n", tempA, strlen(tempA));
-	strcpy(pos, tempA);
-}
-
 int main() {
 	ChessBoard board;
 	int turn = WHITE;
@@ -73,7 +67,6 @@ int main() {
 	double start, decisionTime;
 	FILE *fp;
 	char *buffer = (char *) malloc(100 * sizeof(char));
-	char *pos = (char *) malloc(5 * sizeof(char));
 
 	// Initialize players
 	HumanPlayer p1(WHITE);
@@ -93,16 +86,13 @@ int main() {
 
 	for(int i = 0; i < 5; ++i) {
 		fgets(buffer, 100, fp);
-		printf("before split%d\n", i);
-		splitPos(buffer, pos);
-		printf(pos);
 
 		// query player's choice
 		if(turn) {
-			gmInput(&board, &p2, pos, &move, turn);
+			gmInput(&board, &p2, buffer, &move, turn);
 		}
 		else {
-			gmInput(&board, &p1, pos, &move, turn);
+			gmInput(&board, &p1, buffer, &move, turn);
 		}
 	
 		// opponents turn
@@ -114,6 +104,5 @@ int main() {
 
 	fclose(fp);
 	free(buffer);
-	free(pos);
 	return 0;
 }
